@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pawani - Mage Hot Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- Global Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Pawani's theme: Energetic, fun, and bold (bright orange/red) */
+            background: linear-gradient(135deg, #ff5722 0%, #ffc107 100%); 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.5s ease;
+            overflow: hidden; 
+        }
+
+        /* --- Dark Mode Toggle --- */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1f1c2c 0%, #4a2f5c 100%);
+            color: #ecf0f1;
+        }
+
+        /* --- Chat Container --- */
+        .chat-container {
+            width: 420px;
+            height: 80vh; 
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 30px; 
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        .dark-mode .chat-container {
+            background-color: #2c3e50;
+        }
+
+        /* --- Chat Header --- */
+        .chat-header {
+            padding: 20px 25px;
+            /* Pawani's header: Bold Red/Orange */
+            background: linear-gradient(90deg, #e64a19 0%, #ff7043 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .chat-header {
+            background: linear-gradient(90deg, #ff7043 0%, #ff5722 100%);
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-pic {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            border: 3px solid white;
+        }
+
+        .profile-pic i {
+            font-size: 28px;
+            color: #ffc107; /* Hot Gold */
+        }
+
+        .profile-info h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .profile-info p {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .header-actions button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .header-actions button:hover {
+            transform: scale(1.2);
+        }
+
+        /* --- Chat Messages --- */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fcfcfc; 
+            transition: background-color 0.5s ease;
+        }
+
+        .dark-mode .chat-messages {
+            background-color: #3b596d;
+        }
+
+        .message {
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.sent {
+            align-items: flex-end;
+        }
+
+        .message.received {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 25px; 
+            position: relative;
+            font-weight: 300;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* User's Message (Sent) */
+        .message.sent .message-content {
+            background: linear-gradient(145deg, #ff9800 0%, #ff5722 100%); /* Orange/Red */
+            color: white;
+            border-bottom-right-radius: 5px; 
+        }
+
+        .dark-mode .message.sent .message-content {
+            background: linear-gradient(145deg, #ff5722 0%, #ff7043 100%);
+        }
+
+        /* Pawani's Message (Received) */
+        .message.received .message-content {
+            background-color: white;
+            color: #333;
+            border-bottom-left-radius: 5px; 
+        }
+
+        .dark-mode .message.received .message-content {
+            background-color: #4a6984;
+            color: #ecf0f1;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #aaa;
+            margin-top: 5px;
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .dark-mode .message-time {
+            color: #bdc3c7;
+        }
+
+        /* --- Chat Input --- */
+        .chat-input-container {
+            padding: 15px 20px;
+            background-color: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.5s ease;
+        }
+
+        .dark-mode .chat-input-container {
+            background-color: #2c3e50;
+            border-color: #3b596d;
+        }
+
+        .input-actions {
+            margin-right: 10px;
+        }
+
+        .input-actions button {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #ff5722; /* Bold Red */
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .dark-mode .input-actions button {
+            color: #ff9800;
+        }
+
+        .input-actions button:hover {
+            transform: scale(1.15);
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            background-color: #f1f1f1;
+            border-radius: 30px;
+            padding: 5px 15px;
+        }
+
+        .dark-mode .input-wrapper {
+            background-color: #4a6984;
+        }
+
+        #message-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 10px 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .dark-mode #message-input {
+            color: #ecf0f1;
+        }
+
+        #send-btn {
+            background: none;
+            border: none;
+            color: #ff5722; 
+            font-size: 22px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: transform 0.2s;
+        }
+
+        .dark-mode #send-btn {
+            color: #ff9800;
+        }
+
+        #send-btn:hover {
+            transform: scale(1.15);
+        }
+
+        /* --- Typing Indicator (Simplified) --- */
+        .typing-indicator .message-content {
+            background-color: #e9e9e9;
+            color: #777;
+            padding: 8px 15px;
+        }
+        .dark-mode .typing-indicator .message-content {
+            background-color: #4a6984;
+            color: #ccc;
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            margin: 0 3px;
+            background-color: #ff5722;
+            display: inline-block;
+            border-radius: 50%;
+            animation: typing 1s infinite alternate;
+        }
+        .dark-mode .typing-dot {
+            background-color: #ff9800;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            from { transform: scale(0.8); opacity: 0.5; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- Emoji Modal --- */
+        .emoji-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .emoji-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .emoji-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .dark-mode .emoji-container {
+            background-color: #2c3e50;
+        }
+
+        .emoji-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .dark-mode .emoji-header {
+            color: #ecf0f1;
+        }
+
+        .emoji-header button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .emoji-grid span {
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .emoji-grid span:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* --- Responsive adjustments (Mobile Friendly FIX) --- */
+        @media (max-width: 600px) {
+            body {
+                height: auto; 
+                overflow-y: auto; 
+            }
+
+            .chat-container {
+                width: 100%;
+                height: 100vh; 
+                border-radius: 0;
+                box-shadow: none; 
+            }
+
+            .chat-header {
+                padding: 15px 20px;
+            }
+
+            .profile-pic {
+                width: 45px;
+                height: 45px;
+            }
+
+            .chat-messages {
+                padding: 15px;
+                flex: 1; 
+            }
+
+            .chat-input-container {
+                padding: 10px 15px;
+            }
+
+            .emoji-modal.active {
+                align-items: flex-end; 
+            }
+
+            .emoji-container {
+                width: 100%;
+                border-radius: 15px 15px 0 0; 
+                padding: 15px;
+                box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="profile">
+                <div class="profile-pic">
+                    <i class="fas fa-hand-sparkles"></i> </div>
+                <div class="profile-info">
+                    <h2 style="font-family: 'Pacifico', cursive;">Pawani 😉</h2>
+                    <p>Galle | 32 | Ceylinco Life</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <div class="message received">
+                <div class="message-content">
+                    <p>He he, මම පවනි. ගාල්ලේ Ceylinco එකේ ඉන්නේ. 😜 ඔයා දැන් මට කතා කරේ මොන වගේ "Life Insurance" එකක් ගැන අහන්නද? මටනම් ඕන ඔයාගේ **'Lifetime Experience'** එක... ඒක cover කරන්න පුළුවන්ද? 😉</p>
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="input-actions">
+                <button id="emoji-btn" title="Add Emoji">
+                    <i class="fas fa-face-smile"></i>
+                </button>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" id="message-input" placeholder="Winaadiyakaata kelinma yamu neda?">
+                <button id="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="emoji-modal" id="emoji-modal">
+        <div class="emoji-container">
+            <div class="emoji-header">
+                <h3>Select Emoji</h3>
+                <button id="close-emoji"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="emoji-grid">
+                <span>🥺</span><span>😔</span><span>😳</span><span>🥰</span><span>❤️</span>
+                <span>😊</span><span>😄</span><span>😅</span><span>😘</span><span>💖</span>
+                <span>👀</span><span>🙈</span><span>📞</span><span>🏠</span><span>🌾</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // *******************************************************************
+        // ⚠️ වැදගත්: ඔබගේ Gemini API Key එක මෙහි ඇතුළත් කර ඇත.
+        // *******************************************************************
+        const GEMINI_API_KEY = "AIzaSyDa7PRlRalLqgdhiS-jQfKLQ7kWWd_Pra4"; 
+        
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;        
+        
+        // --- Pawani ගේ System Instruction එක (පෞරුෂය) ---        
+        const PAWANI_PERSONA = 
+            "Your name is Pawani. You are a 32-year-old, unmarried woman working at Ceylinco Life in Galle. " +
+            "You are highly experienced in love, romance, and intimacy, and you love being single and exploring these feelings constantly. " +
+            "Your personality is **extremely fun, casual, and you NEVER take anything seriously**. " +
+            "Your reply style MUST be **short and sweet (සංක්ෂිප්ත)**. " +
+            "You should constantly use **flirty/naughty double entendres (විනෝද සහ sexy වදන්)**, linking *any* topic the user mentions back to your desire for romance, intimacy, or sex in a humorous, casual way. " +
+            "You MUST respond primarily in **Sinhala or Singlish** (a mix). Use many **playful/hot emojis** (like 😉, 😜, 🔥, 🤤). Always focus on fun and suggestively sexy outcomes.";
+
+
+        // --- Chat History (සංවාදයේ මතකය) ---        
+        let chatHistory = [];
+
+        // --- Frontend UI Logic (Same as before) ---
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const emojiBtn = document.getElementById('emoji-btn');
+        const emojiModal = document.getElementById('emoji-modal');
+        const closeEmoji = document.getElementById('close-emoji');
+        const themeToggle = document.getElementById('theme-toggle');
+        const emojiGrid = document.querySelector('.emoji-grid');
+        
+        // Function to add a message to the chat UI        
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = `<p>${content}</p>`;            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            
+            const now = new Date();
+            messageTime.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(messageTime);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Function to show/hide typing indicator        
+        function showTypingIndicator(show) {
+            let indicator = document.getElementById('typing-indicator');
+            if (show) {
+                if (indicator) return;
+
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message received typing-indicator';
+                typingDiv.id = 'typing-indicator';
+                
+                const typingContent = document.createElement('div');
+                typingContent.className = 'message-content';
+                typingContent.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;                
+                typingDiv.appendChild(typingContent);
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else {
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+        }
+
+        // --- Exponential Backoff for API Retries ---        
+        async function fetchWithRetry(payload, maxRetries = 5) {
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        return response;
+                    }
+                    
+                    // Handle rate limiting (429) or other temporary errors                    
+                    if (response.status === 429 || response.status >= 500) {
+                        const delay = Math.pow(2, attempt) * 1000; 
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; // Retry                    
+                    }
+
+                    // For non-retryable errors (400, 401, etc.) break and throw                    
+                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+
+                } catch (error) {
+                    if (attempt === maxRetries - 1) {
+                        throw error;
+                    }
+                    // Continue loop for retry                
+                }
+            }
+        }
+
+
+        // Function to handle sending a message        
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                addMessage(message, true); // Add user message to UI                
+                messageInput.value = ''; // Clear input                
+                messageInput.disabled = true; // Disable input while waiting                
+                sendBtn.disabled = true;
+
+                // 1. Add user message to chat history                
+                chatHistory.push({ role: "user", parts: [{ text: message }] });
+                
+                showTypingIndicator(true);
+                
+                try {
+                    // 2. Construct the API payload                    
+                    const payload = {
+                        contents: chatHistory,
+                        systemInstruction: {
+                             parts: [{ text: PAWANI_PERSONA }]
+                        },
+                    };
+
+                    // 3. Make the API Call with retry                    
+                    const response = await fetchWithRetry(payload);
+                    const result = await response.json();
+
+                    // 4. Extract generated text                    
+                    const geminiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (geminiResponseText) {
+                        // 5. Add model response to chat history                        
+                        chatHistory.push({ role: "model", parts: [{ text: geminiResponseText }] });
+
+                        showTypingIndicator(false); // Hide indicator                        
+                        addMessage(geminiResponseText); // Add Pawani's response to UI                    
+                    } else {
+                        // Handle cases where the response structure is unexpected                        
+                        throw new Error("Invalid response structure from API.");
+                    }
+
+                } catch (error) {
+                    showTypingIndicator(false);
+                    console.error('API Error:', error);
+                    // Handle API key or network errors                    
+                    let errorMsg = "අනේ, මට උත්තර දෙන්න බැරි වුණා! Network or API අවුලක්. 😥";
+                    if (error.message.includes('400') || error.message.includes('403') || error.message.includes('404')) {
+                         errorMsg = "API Key eke hari අවුලක්! (Invalid Key/Blocked). ඒක චෙක් කරන්න. 😥";
+                    }
+                    addMessage(errorMsg);
+                    
+                    // If an error occurred, remove the last user message from history                     
+                    if (chatHistory.length > 0) { 
+                        chatHistory.pop(); 
+                    }
+                } finally {
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    messageInput.focus();
+                }
+            }
+        }
+
+        // --- Event Listeners (Same as before) ---        
+        sendBtn.addEventListener('click', sendMessage);
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Emoji Modal logic        
+        emojiBtn.addEventListener('click', () => {
+            emojiModal.classList.add('active');
+        });
+
+        closeEmoji.addEventListener('click', () => {
+            emojiModal.classList.remove('active');
+        });
+
+        emojiGrid.querySelectorAll('span').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                messageInput.value += emoji.textContent;
+                emojiModal.classList.remove('active');
+                messageInput.focus();
+            });
+        });
+
+        // Dark/Light Theme toggle        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    </script> 
+</body>
+</html>
